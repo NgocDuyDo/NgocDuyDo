@@ -1,1 +1,80 @@
 Some work have been done for final project of group 4- Four in Interaction design studio
+import SwiftUI
+
+struct ContentView: View {
+    var body: some View {
+        TabView {
+            HomeView()
+                .tabItem {
+                    Label("Home", systemImage: "house")
+                }
+            MealLogView()
+                .tabItem {
+                    Label("Log", systemImage: "book")
+                }
+            UserView()
+                .tabItem {
+                    Label("User Info", systemImage: "person")
+                }
+        }
+    }
+}
+struct LineChartView: View {
+    let dataPoints: [Double]
+    let maxValue: Double
+    var body: some View {
+        GeometryReader {geometry in
+            ZStack {
+                ForEach(0..<6) {index in
+                    let y = CGFloat(index) / 5 * geometry.size.height
+                    Path{ path in
+                        path.move(to: CGPoint (x: 0, y: y))
+                        path.addLine(to: CGPoint(x: geometry.size.width, y: y))
+                    }
+                    .stroke(Color.gray.opacity(0.5), style: StrokeStyle(lineWidth: 1, dash: [5]))
+                }
+                Path { path in
+                    for (index, dataPoint) in dataPoints.enumerated() {
+                        let x = CGFloat(index) / CGFloat(dataPoints.count - 1) * geometry.size.width
+                        let y = CGFloat(1 - dataPoint / maxValue) * geometry.size.height
+                        if index == 0 {
+                            path.move(to: CGPoint(x: x, y: y))
+                        } else {
+                            path.addLine(to: CGPoint(x: x, y: y))
+                        }
+                    }
+                }
+                .stroke(Color.blue, style: StrokeStyle(lineWidth: 2))
+            }
+        }
+        .padding()
+    }
+}
+struct HomeView: View {
+    let caloriesData = [300.0, 500.0, 600.0, 400.0, 700.0, 650.0]
+    let maxCalories = 1000.0
+    var body: some View {
+        VStack {
+            Spacer()
+            Label("Diet App", systemImage: "leaf")
+                .foregroundColor(.mint)
+                .font(.largeTitle)
+                .fontWeight(.bold)
+            Spacer()
+            Text("Calories Trends")
+                .font(.title)
+                .padding()
+            LineChartView(dataPoints: caloriesData, maxValue: maxCalories)
+                .frame(height: 200)
+            Spacer()
+            Text("🍽️")
+                .font(.system(size: 100))
+            Spacer()
+        }
+    }
+}
+
+#Preview {
+    ContentView()
+}
+
